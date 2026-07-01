@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MentorLab — Блогер-конкурс 2026</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Montserrat', -apple-system, sans-serif; background: #f0f7f6; min-height: 100vh; }
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+  .header { background: #245750; padding: 18px 20px 0; }
+  .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .logo-badge { background: #FFBD59; border-radius: 8px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #245750; flex-shrink: 0; }
+  .logo-title { color: white; font-weight: 700; font-size: 17px; }
+  .logo-sub { color: rgba(255,255,255,0.55); font-size: 12px; margin-left: 4px; }
+  .tabs { display: flex; gap: 4px; }
+  .tab { background: transparent; color: rgba(255,255,255,0.6); border: none; border-radius: 8px 8px 0 0; padding: 9px 16px; font-family: inherit; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+  .tab.active { background: #f0f7f6; color: #245750; }
+
+  .content { max-width: 560px; margin: 0 auto; padding: 20px 14px 40px; }
+
+  /* Cards */
+  .card { background: white; border-radius: 14px; padding: 16px 18px; margin-bottom: 10px; border: 1.5px solid transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .card.viral { border-color: #FFBD59; }
+
+  /* Board */
+  .board-meta { font-size: 13px; color: #666; margin-bottom: 14px; }
+  .info-box { background: #e8f4f2; border-radius: 10px; padding: 11px 14px; margin-bottom: 16px; font-size: 13px; color: #245750; font-weight: 600; }
+  .board-row { display: flex; align-items: center; gap: 14px; }
+  .medal { font-size: 28px; min-width: 34px; text-align: center; }
+  .pname { font-weight: 700; font-size: 15px; color: #245750; }
+  .psub { font-size: 12px; color: #999; margin-top: 2px; }
+  .viral-badge { background: #FFBD59; color: #245750; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle; }
+  .views-num { font-weight: 800; font-size: 22px; color: #245750; text-align: right; }
+  .views-lbl { font-size: 11px; color: #aaa; text-align: right; }
+
+  /* WINNER BANNER */
+  .winner-banner { background: linear-gradient(135deg, #245750, #1a3e39); border-radius: 14px; padding: 20px; margin-bottom: 16px; text-align: center; color: white; border: 2px solid #FFBD59; }
+  .winner-banner .trophy { font-size: 48px; margin-bottom: 8px; }
+  .winner-banner h2 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .winner-banner p { font-size: 14px; opacity: 0.85; }
+  .winner-name { font-size: 22px; font-weight: 800; color: #FFBD59; margin: 8px 0; }
+
+  /* Form */
+  label { display: block; font-size: 12px; font-weight: 700; color: #245750; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+  input[type=text], input[type=url], input[type=number], input[type=tel] {
+    width: 100%; padding: 13px 14px; border-radius: 10px; border: 1.5px solid #dde8e7;
+    font-family: inherit; font-size: 15px; outline: none; margin-bottom: 14px;
+    transition: border-color 0.15s; color: #333;
+  }
+  input:focus { border-color: #245750; }
+  .platform-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .plat-btn { flex: 1; padding: 10px 0; border-radius: 10px; border: 1.5px solid #dde8e7; background: white; color: #666; font-family: inherit; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.15s; }
+  .plat-btn.sel { border-color: #245750; background: #245750; color: white; }
+  .submit-btn { width: 100%; padding: 14px; border-radius: 12px; background: #245750; color: white; border: none; font-family: inherit; font-weight: 700; font-size: 16px; cursor: pointer; transition: opacity 0.15s; }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .hint { font-size: 12px; color: #aaa; text-align: center; margin-top: 10px; }
+
+  /* Success */
+  .success-screen { text-align: center; padding: 48px 0; }
+  .success-screen .big { font-size: 56px; margin-bottom: 12px; }
+  .success-screen h3 { font-size: 19px; color: #245750; font-weight: 700; }
+  .success-screen p { color: #888; font-size: 14px; margin-top: 6px; }
+
+  /* Admin */
+  .admin-login { text-align: center; padding: 40px 0; }
+  .admin-login .lock { font-size: 44px; margin-bottom: 14px; }
+  .pw-input { text-align: center; max-width: 240px; margin: 0 auto 12px; display: block; }
+  .admin-post { background: white; border-radius: 12px; padding: 14px; margin-bottom: 10px; border: 1.5px solid #eee; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .admin-post.verified { border-color: #5DCAA5; }
+  .admin-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .admin-actions { display: flex; gap: 6px; margin-top: 10px; align-items: center; }
+  .admin-actions input { flex: 1; margin: 0; padding: 8px 10px; font-size: 13px; }
+  .icon-btn { padding: 8px 12px; border-radius: 8px; border: 1.5px solid #eee; background: #f8f8f8; cursor: pointer; font-size: 14px; font-family: inherit; }
+  .empty { text-align: center; padding: 60px 0; color: #bbb; }
+  .empty .big { font-size: 48px; margin-bottom: 10px; }
+  .spinner { text-align: center; padding: 40px; color: #888; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="max-width:560px;margin:0 auto;">
+    <div class="logo-row">
+      <div class="logo-badge">ML</div>
+      <span class="logo-title">MentorLab</span>
+      <span class="logo-sub">Блогер-конкурс 2026</span>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('board',this)">🏆 Лидерборд</button>
+      <button class="tab" onclick="showTab('submit',this)">📲 Добавить пост</button>
+      <button class="tab" onclick="showTab('admin',this)">⚙️ Админ</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ЛИДЕРБОРД -->
+  <div id="tab-board">
+    <div id="board-content"><div class="spinner">Загрузка...</div></div>
+  </div>
+
+  <!-- ФОРМА -->
+  <div id="tab-submit" style="display:none">
+    <div id="submit-form">
+      <div class="info-box">📱 Родители тоже вводят номер телефона своего ребёнка-студента</div>
+      <label>Номер телефона студента</label>
+      <input type="tel" id="f-phone" placeholder="+7 777 123 45 67">
+      <label>Имя студента</label>
+      <input type="text" id="f-name" placeholder="Айгерим Сейткали">
+      <label>Ссылка на пост с отметкой @mentorlab</label>
+      <input type="url" id="f-link" placeholder="https://tiktok.com/@...">
+      <label>Просмотры прямо сейчас</label>
+      <input type="number" id="f-views" placeholder="12500">
+      <label>Платформа</label>
+      <div class="platform-row">
+        <button class="plat-btn sel" onclick="selPlat(this,'TikTok')">TikTok</button>
+        <button class="plat-btn" onclick="selPlat(this,'Instagram')">Instagram</button>
+        <button class="plat-btn" onclick="selPlat(this,'YouTube')">YouTube</button>
+      </div>
+      <button class="submit-btn" id="submit-btn" onclick="submitPost()">Добавить пост</button>
+      <p class="hint">Администратор проверяет и корректирует данные</p>
+    </div>
+    <div id="submit-success" style="display:none" class="success-screen">
+      <div class="big">✅</div>
+      <h3>Пост добавлен!</h3>
+      <p>Переходим на лидерборд...</p>
+    </div>
+  </div>
+
+  <!-- АДМИН -->
+  <div id="tab-admin" style="display:none">
+    <div id="admin-login-block" class="admin-login">
+      <div class="lock">🔒</div>
+      <label style="text-align:center;margin-bottom:10px">Код доступа</label>
+      <input type="password" id="admin-pw" class="pw-input" placeholder="Введи код"
+             onkeydown="if(event.key==='Enter')tryAdmin()" style="display:block;width:100%">
+      <button class="submit-btn" style="max-width:240px;margin:0 auto;display:block" onclick="tryAdmin()">Войти</button>
+      <p class="hint" style="margin-top:10px">Код: mentorlab2026</p>
+    </div>
+    <div id="admin-panel" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span style="font-weight:700;color:#245750;font-size:14px" id="admin-count"></span>
+        <button onclick="logoutAdmin()" style="background:none;border:none;font-size:13px;color:#aaa;cursor:pointer">Выйти</button>
+      </div>
+      <div id="admin-list"><div class="spinner">Загрузка...</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let posts = [];
+let platform = 'TikTok';
+const ADMIN_CODE = 'mentorlab2026';
+
+function fmtV(n) {
+  if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return String(n);
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function getLeaderboard() {
+  const map = {};
+  posts.forEach(e => {
+    const key = e.phone.replace(/\D/g, '');
+    if (!map[key]) map[key] = { name: e.name, phone: e.phone, posts: 0, views: 0, hasViral: false };
+    map[key].posts++;
+    map[key].views += e.views;
+    if (e.views >= 1000000) map[key].hasViral = true;
+  });
+  return Object.values(map).sort((a, b) => b.views - a.views);
+}
+
+async function loadPosts() {
+  try {
+    const r = await fetch('/api/posts');
+    posts = await r.json();
+  } catch (e) {
+    posts = [];
+  }
+}
+
+function renderBoard() {
+  const lb = getLeaderboard();
+  const medals = ['🥇', '🥈', '🥉'];
+  const viralWinners = lb.filter(p => p.hasViral);
+  let html = '';
+
+  if (viralWinners.length > 0) {
+    viralWinners.forEach(w => {
+      html += `
+        <div class="winner-banner">
+          <div class="trophy">🏆</div>
+          <h2>ПОБЕДИТЕЛЬ КОНКУРСА!</h2>
+          <div class="winner-name">${esc(w.name)}</div>
+          <p>Набрал(а) 1 000 000+ просмотров в одном видео!</p>
+        </div>`;
+    });
+  }
+
+  html += `<div class="info-box">🎯 Набери 1 000 000 просмотров в одном видео — и выигрываешь автоматически!</div>`;
+
+  if (!lb.length) {
+    html += `<div class="empty"><div class="big">📭</div>Пока никого нет — добавь первый пост!</div>`;
+  } else {
+    html += `<div class="board-meta">${lb.length} участников · ${posts.length} постов зарегистрировано</div>`;
+    lb.forEach((p, i) => {
+      html += `
+        <div class="card${p.hasViral ? ' viral' : ''}">
+          <div class="board-row">
+            <div class="medal">${medals[i] || '#' + (i + 1)}</div>
+            <div style="flex:1">
+              <div class="pname">${esc(p.name)}${p.hasViral ? '<span class="viral-badge">ВИРАЛ 🔥</span>' : ''}</div>
+              <div class="psub">${p.posts} ${p.posts === 1 ? 'пост' : 'постов'}</div>
+            </div>
+            <div>
+              <div class="views-num">${fmtV(p.views)}</div>
+              <div class="views-lbl">просмотров</div>
+            </div>
+          </div>
+        </div>`;
+    });
+  }
+
+  document.getElementById('board-content').innerHTML = html;
+}
+
+function renderAdmin() {
+  document.getElementById('admin-count').textContent = 'Все посты (' + posts.length + ')';
+  if (!posts.length) {
+    document.getElementById('admin-list').innerHTML = '<div class="empty"><div class="big">📭</div>Нет записей</div>';
+    return;
+  }
+  document.getElementById('admin-list').innerHTML = [...posts].map(e => `
+    <div class="admin-post${e.verified ? ' verified' : ''}" id="ap-${e.id}">
+      <div class="admin-top">
+        <div>
+          <div style="font-weight:700;font-size:14px;color:#245750">${esc(e.name)}</div>
+          <div style="font-size:12px;color:#999">${esc(e.phone)} · ${e.platform} · ${e.date}</div>
+          <a href="${esc(e.link)}" target="_blank" style="font-size:11px;color:#5a9e94;word-break:break-all">${esc(e.link.length > 40 ? e.link.slice(0, 40) + '…' : e.link)}</a>
+        </div>
+        <div style="text-align:right;min-width:64px">
+          <div style="font-weight:800;font-size:18px;color:#245750">${fmtV(e.views)}</div>
+          ${e.views >= 1000000 ? '<div style="font-size:10px;color:#FFBD59;font-weight:800">🔥 ВИРАЛ</div>' : ''}
+        </div>
+      </div>
+      <div class="admin-actions">
+        <input type="number" placeholder="Обновить просмотры" id="ev-${e.id}">
+        <button class="icon-btn" onclick="updateViews(${e.id})">✓</button>
+        <button class="icon-btn" onclick="toggleVerify(${e.id})">${e.verified ? '✅' : '☐'}</button>
+        <button class="icon-btn" onclick="delPost(${e.id})">🗑</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showTab(name, btn) {
+  ['board', 'submit', 'admin'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === name ? '' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (name === 'board') { loadPosts().then(renderBoard); }
+  if (name === 'admin' && document.getElementById('admin-panel').style.display !== 'none') {
+    loadPosts().then(renderAdmin);
+  }
+}
+
+function selPlat(btn, p) {
+  platform = p;
+  document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+async function submitPost() {
+  const phone = document.getElementById('f-phone').value.trim();
+  const name = document.getElementById('f-name').value.trim();
+  const link = document.getElementById('f-link').value.trim();
+  const views = parseInt(document.getElementById('f-views').value) || 0;
+  if (!phone || !name || !link || !views) return;
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Отправляем...';
+
+  try {
+    await fetch('/api/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, name, link, views, platform, date: new Date().toLocaleDateString('ru-RU') })
+    });
+    document.getElementById('submit-form').style.display = 'none';
+    document.getElementById('submit-success').style.display = 'block';
+    ['f-phone', 'f-name', 'f-link', 'f-views'].forEach(id => document.getElementById(id).value = '');
+    await loadPosts();
+    setTimeout(() => {
+      document.getElementById('submit-success').style.display = 'none';
+      document.getElementById('submit-form').style.display = 'block';
+      document.querySelector('.tab').click();
+    }, 2000);
+  } catch (e) {
+    alert('Ошибка. Попробуй ещё раз.');
+  }
+  btn.disabled = false;
+  btn.textContent = 'Добавить пост';
+}
+
+async function tryAdmin() {
+  if (document.getElementById('admin-pw').value === ADMIN_CODE) {
+    document.getElementById('admin-login-block').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    await loadPosts();
+    renderAdmin();
+  } else {
+    alert('Неверный код');
+  }
+}
+
+function logoutAdmin() {
+  document.getElementById('admin-login-block').style.display = 'block';
+  document.getElementById('admin-panel').style.display = 'none';
+  document.getElementById('admin-pw').value = '';
+}
+
+async function updateViews(id) {
+  const val = parseInt(document.getElementById('ev-' + id).value);
+  if (!val) return;
+  await fetch('/api/posts/' + id, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ views: val })
+  });
+  await loadPosts();
+  renderAdmin();
+}
+
+async function toggleVerify(id) {
+  const post = posts.find(p => p.id === id);
+  await fetch('/api/posts/' + id, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ verified: !post.verified })
+  });
+  await loadPosts();
+  renderAdmin();
+}
+
+async function delPost(id) {
+  if (!confirm('Удалить этот пост?')) return;
+  await fetch('/api/posts/' + id, { method: 'DELETE' });
+  await loadPosts();
+  renderAdmin();
+}
+
+// Старт
+loadPosts().then(renderBoard);
+</script>
+</body>
+</html>
